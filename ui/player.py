@@ -45,13 +45,18 @@ class PlayerWindow(QMainWindow, RawPlayerWindow):
     def __handle_play_pause(self):
         if not self.__player:
             if not (self.__audio_filename and self.__selected_sound_output):
-                print("Duck out!")
                 return
             self.__player = self.__audio_service.get_player(
-                self.__audio_filename, self.__selected_sound_output
+                self.__audio_filename,
+                self.__selected_sound_output,
+                self.__position_callback,
             )
 
         if self.__player.isPlaying():
             self.__player.pause()
         else:
             self.__player.play()
+
+    def __position_callback(self, position: int, duration: int):
+        self.progressBar.setMaximum(duration)
+        self.progressBar.setValue(position)
